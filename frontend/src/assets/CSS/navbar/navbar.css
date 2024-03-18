@@ -1,0 +1,29 @@
+#navbarList{
+    display: flex;
+    justify-content: center;
+}
+
+a.nav-link.active.text, h1.navbar-brand{
+    color: white;
+    text-shadow: 4px 4px 4px  black;
+    margin: 0px 15px;
+}
+
+li.nav-item{
+    border-radius: 20px;
+}
+li.nav-item:hover{
+    background-color: rgb(203, 161, 161 ,0.5);
+}
+a.nav-link.active.text:hover{
+    color: rgb(92, 202, 71);   
+}
+
+h1.navbar-brand:hover{
+    color: white;
+}
+
+#navToggleButton span{
+    background-color: white;
+}
+

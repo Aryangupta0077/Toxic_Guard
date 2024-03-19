@@ -1,4 +1,3 @@
-import React, { useEffect, useRef, useState } from "react";
 import "../assets/CSS/landing/landing.css";
 import Navbar from "./Navbar";
 import { LoginSocialFacebook } from "reactjs-social-login";
@@ -11,7 +10,6 @@ export default function Landing() {
   
     return (
     <>
-      <section className="scrollEffect">
         <div className="landingContent">
           <div className="bgImg"></div>
           <div className="navv">
@@ -33,17 +31,15 @@ export default function Landing() {
             </p>
           </motion.div>
         </div>
-      </section>
-      <section className="scrollEffect">
         <div className="getStarted" id="getStarted">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 1.8, ease: "easeInOut" }}
+            className="quoteAndBtn"
           >
             <div>
               <motion.h1
-                className="typeWriter"
               >"Safeguarding Your Social Spaces Against Cyberbullying!"</motion.h1>
             </div>
             <div className="fbbtn">
@@ -63,8 +59,6 @@ export default function Landing() {
             </div>
           </motion.div>
         </div>
-      </section>
-      <section className="scrollEffect">
         <div className="aboutUs" id="aboutUs">
           <motion.div
             initial={{ opacity: 0 }}
@@ -73,7 +67,7 @@ export default function Landing() {
           >
             <h1>About Us</h1>
             <div className="cards">
-              <div className="card" style={{width:'20rem'}}>
+              <div className="card" >
                 <img src={ankush} className="card-img-top" alt="..." />
                 <div className="card-body">
                   <h2 className="card-title" style={{color:"white"}}>Ankush Kumar</h2>
@@ -82,11 +76,11 @@ export default function Landing() {
                     up the bulk of the card's content.
                   </p>
                   <a href="/" className="bttn">
-                    Go somewhere
+                    contact
                   </a>
                 </div>
               </div>
-              <div className="card" style={{width:'20rem'}}>
+              <div className="card" >
                 <img src={visharad} className="card-img-top" alt="..." />
                 <div className="card-body">
                   <h2 className="card-title" style={{color:"white"}}>Visharad Sandal</h2>
@@ -95,11 +89,11 @@ export default function Landing() {
                     up the bulk of the card's content.
                   </p>
                   <a href="/" className="bttn">
-                    Go somewhere
+                    contact
                   </a>
                 </div>
               </div>
-              <div className="card" style={{width:'20rem'}}>
+              <div className="card" >
                 <img src={aryan} className="card-img-top" alt="..." />
                 <div className="card-image-overlay">
                   <h2 className="card-title" style={{color:"white"}}>Aryan Gupta</h2>
@@ -108,14 +102,13 @@ export default function Landing() {
                     up the bulk of the card's content.
                   </p>
                   <a href="/" className="bttn">
-                    Go somewhere
+                    contact
                   </a>
                 </div>
               </div>
             </div>
           </motion.div>
         </div>
-      </section>
     </>
   );
 }

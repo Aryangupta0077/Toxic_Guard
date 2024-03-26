@@ -28,7 +28,6 @@ app.post("/login", async (req, res) => {
     );
     if (check.data.name) {
       const findUser = await userSchema.findOne({ userId: check.data.id });
-      console.log(findUser)
       if (!findUser) {
         await userSchema.insertMany({
           name: check.data.name,

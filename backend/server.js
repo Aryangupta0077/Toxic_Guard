@@ -1,72 +1,154 @@
 const express = require("express");
-const Facebook = require("facebook-node-sdk");
-const cors = require("cors");
+const authRoutes = require("./routes/auth-routes");
 require("./models/database/db");
-const userSchema = require("./models/database/userSchema");
+const passportSetup = require("./config/passportSetup");
+const cors = require("cors");
+const passport = require("passport");
+const cookieSession = require("cookie-session");
 const axios = require("axios");
+const { google } = require("googleapis");
 
 const app = express();
-app.use(express.json());
-app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-const fb = new Facebook({
-  appID: "342731435436198",
-  secret: "413a2d605d195539a57f9c8a9dbe2acb",
+app.use(
+  cookieSession({
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: [process.env.SECRET],
+  })
+);
+
+// initialise passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Middleware
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "PUT,DELETE,POST,GET",
+    credentials: true,
+  })
+);
+app.use("/auth", authRoutes);
+
+function checkLogin(req, res, next) {
+  // console.log(req.user)
+  if (!req.user) {
+    res.send({ logInStat: false });
+  } else {
+    next();
+  }
+}
+
+app.get("/profile", checkLogin, (req, res) => {
+  res.send({ logInStat: true, userData: req.user });
 });
 
-// fb.api('/me',{access_token: "EAAE3tmF2aKYBOzi20bbqngrPw57UrjGqMxIabF4cVQepUnOFc0vZAZAdd5f6x9ZAQ3eDoOoPxPyJ3xy16HosD7DIbeIAzZAcujKHlcr8cNDZA2GV5WYkTb9vz2ZCtWdRxv8TiLj8m8Imrrodl7x76brggObHGrZBQ7eJQy928ZBxVhOD3SEZAf4iZAWNBOCJ706YOkfnuPcyS4yc114cyptQZDZD"},(err, data)=>{
-//     if (err) {
-//         console.error('Error occurred:', err);
-//     } else {
-//         console.log('Data received:', data);
-//     }
-// })
-app.post("/login", async (req, res) => {
+app.get("/profile/videos", (req, res) => {
   try {
-    const check = await axios.get(
-      `https://graph.facebook.com/me?access_token=${req.body.accessToken}`
-    );
-    if (check.data.name) {
-      const findUser = await userSchema.findOne({ userId: check.data.id });
-      if (!findUser) {
-        await userSchema.insertMany({
-          name: check.data.name,
-          userId: check.data.id,
-          accessToken: req.body.accessToken,
-        });
-        res.status(200).send(check.data);
-      } else {
-        await userSchema.updateOne(
-          { userId: check.data.id },
-          {$set: { accessToken: req.body.accessToken }}
-        );
-        res.status(200).send(check.data);
-      }
-    } else {
-      res.send("error");
+    axios
+      .get("https://www.googleapis.com/youtube/v3/channels", {
+        headers: {
+          Authorization: `Bearer ${req.user.accessToken}`,
+        },
+        params: {
+          part: "snippet",
+          mine: true,
+        },
+      })
+      .then((response) => {
+        // Check if the response status is OK (200)
+        if (response.status === 200) {
+          const channelId = response.data.items[0].id;
+          axios
+            .get("https://www.googleapis.com/youtube/v3/search", {
+              headers: {
+                Authorization: `Bearer ${req.user.accessToken}`,
+              },
+              params: {
+                part: "snippet",
+                channelId: channelId,
+                type: "video",
+                maxResults: 10,
+              },
+            })
+            .then((videoResponse) => {
+              const videoIds = videoResponse.data.items
+                .map((item) => item.id.videoId)
+                .join(",");
+              axios
+                .get("https://www.googleapis.com/youtube/v3/videos", {
+                  headers: {
+                    Authorization: `Bearer ${req.user.accessToken}`,
+                  },
+                  params: {
+                    part: "snippet,contentDetails",
+                    id: videoIds,
+                  },
+                })
+                .then((videoData) => {
+                  let userVideoData = [];
+                  for (let i = 0; i < videoData.data.items.length; i++) {
+                    let youtubeData = {
+                      id: videoData.data.items[i].id,
+                      publishedAt: videoData.data.items[i].snippet.publishedAt,
+                      title: videoData.data.items[i].snippet.title,
+                      description: videoData.data.items[i].snippet.description,
+                      url: videoData.data.items[i].snippet.thumbnails.default
+                        .url,
+                    };
+                    userVideoData.push(youtubeData);
+                  }
+                  res.send(userVideoData);
+                });
+            });
+        } else {
+          // If the response status is not OK, log the error
+          console.error("Error accessing YouTube API:", response.statusText);
+          // Send an error response to the client
+          res.status(response.status).send(response.statusText);
+        }
+      })
+      .catch((error) => {
+        // Log any errors that occur during the request
+        console.error("Error accessing YouTube API:", error);
+        // Send an error response to the client
+        res.status(500).send("Internal Server Error");
+      });
+  } catch (error) {
+    // Catch any synchronous errors that occur
+    console.error("Error:", error);
+    // Send an error response to the client
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/profile/comments", async (req, res) => {
+  try {
+    let commentsData = []
+    const auth = new google.auth.OAuth2();
+    auth.setCredentials({ access_token: req.user.accessToken });
+    const youtube = google.youtube({ version: "v3", auth });
+    const response = await youtube.commentThreads.list({
+      part: "snippet",
+      videoId: req.query.videoId,
+    });
+    for (let i = 0; i < response.data.items.length; i++) {
+      const comments = {
+        commentId:response.data.items[i].snippet.topLevelComment.id,
+        commentText:response.data.items[i].snippet.topLevelComment.snippet.textOriginal,
+        author:response.data.items[i].snippet.topLevelComment.snippet.authorDisplayName,
+        image:response.data.items[i].snippet.topLevelComment.snippet.authorProfileImageUrl,
+        datePublished:response.data.items[i].snippet.topLevelComment.snippet.publishedAt,
+        dateUpdated:response.data.items[i].snippet.topLevelComment.snippet.updatedAt,
+        authorChannelLink:response.data.items[i].snippet.topLevelComment.snippet.authorChannelUrl
     }
+     commentsData.push(comments) 
+    }
+    res.send(commentsData)
   } catch (error) {
-    console.log(error);
+    res.send(error.message);
   }
 });
-
-app.get("/validation", async (req, res) => {
-  try {
-    const id = req.headers.id
-    const findUser = await userSchema.findOne({ userId: id });
-    const check = await axios.get(
-      `https://graph.facebook.com/me?access_token=${findUser.accessToken}`)
-      if (check.data.name) {
-        res.send({status:"valid"})
-      }
-      else{
-        res.send({status:"invalid"})
-      }
-
-  } catch (error) {
-    res.send(error);
-  }
-});
-app.listen(80, () => {
-  console.log("Server is running");
+app.listen(5000, () => {
+  console.log("Server is running on port 5000");
 });

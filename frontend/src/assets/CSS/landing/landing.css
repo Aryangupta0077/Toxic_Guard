@@ -3,13 +3,6 @@
     text-shadow: 4px 4px 4px  black;
     margin: 0;padding: 0;
 }
-/* Navbar styling */
-.navv{
-    position: fixed;
-    top: 0px;
-    background-color: rgb(54, 53, 53,0.4);
-    width: 100vw;
-}
 /* Description Styling */
 .landingContent{
     height: 100vh;
@@ -55,6 +48,9 @@
     .intro h1{
         font-size: 2rem;
     }
+    .logout-btn{
+        position: relative;
+    }
 }
 
 @media  screen and (max-width:580px) {
@@ -79,9 +75,6 @@
 
 @media  screen and (max-width:637px) {
     .bgImg{
-        width: 100vw;
-    }
-    .navv{
         width: 100vw;
     }
     .aboutUs{
@@ -130,6 +123,8 @@
 .fbbtn{
     display: flex;
     justify-content: center;
+    position: relative;
+    top: 25px;
 }
 
 /* About us and its components */
@@ -169,14 +164,6 @@
     }
 }
 
-@media screen and (max-width:635px){
-    .intro{
-        right: 0px;
-        top: 0px;
-        left: 0px;
-        bottom: 0px;
-    }
-}
 @media screen and (max-width:712px){
     .intro p{
         font-size: 1rem;

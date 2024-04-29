@@ -5,11 +5,8 @@ export default function Error() {
   return (
     <>
       <div className='errorPage'>
-      <div className="navv">
-        {<Navbar/>}
-      </div>
       <div className="error">
-        Oops! An error occured.... Please login Again
+        <h1>Oops! user not logged in...please log in first</h1>
       </div>
       </div>
     </>

@@ -1,5 +1,18 @@
+.postPageHeader{
+    height: 35vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.videos{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 .postsPage{
     height: 100vh;
     width: 100vw;
-    background-color: green;
+    background-color: black;
 }

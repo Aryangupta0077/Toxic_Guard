@@ -1,36 +1,22 @@
 import "../assets/CSS/landing/landing.css";
-import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
-import { LoginSocialFacebook } from "reactjs-social-login";
-import { FacebookLoginButton } from "react-social-login-buttons";
 import axios from "axios";
 import aryan from "../assets/images/aryan.jpeg";
 import ankush from "../assets/images/Ankush.jpg";
 import visharad from "../assets/images/visharad.jpeg";
 import { motion } from "framer-motion";
-export default function Landing() {
-  const navigate = useNavigate();
-  // Calling the function when the promise is resolve
-  const handleLogin = async (response) => {
-    const postData = { accessToken: response.data.accessToken };
-    await axios
-      .post("http://127.0.0.1/login", postData)
-      .then((res) => {
-        localStorage.setItem("userId", res.data.id);
-        localStorage.setItem("name", res.data.name);
-        navigate("/posts");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+import GoogleButton from 'react-google-button'
+
+
+export default function Landing(props) {
+  const handleLogin = () => {
+    window.open("http://127.0.0.1:5000/auth/google","_self")
   };
+
   return (
     <>
       <div className="landingContent">
         <div className="bgImg"></div>
-        <div className="navv">
-          <Navbar />
-        </div>
         <motion.div
           className="intro"
           initial={{ opacity: 0 }}
@@ -61,17 +47,9 @@ export default function Landing() {
             </motion.h1>
           </div>
           <div className="fbbtn">
-            {
-              <LoginSocialFacebook
-                appId="342731435436198"
-                onResolve={handleLogin}
-                onReject={(error) => {
-                  console.log(error);
-                }}
-              >
-                <FacebookLoginButton />
-              </LoginSocialFacebook>
-            }
+           {
+            localStorage.getItem('btnStat')?<GoogleButton onClick={handleLogin}/>:<h3>You are logged in</h3>
+           }
           </div>
         </motion.div>
       </div>

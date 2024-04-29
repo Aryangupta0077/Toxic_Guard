@@ -1,8 +1,19 @@
-import React from "react";
 import "../assets/CSS/navbar/navbar.css";
 import logo from "../assets/images/logo.png";
 import { motion } from "framer-motion";
-export default function Navbar() {
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+export default function Navbar(props) {
+  const navigate = useNavigate()
+  const logOut = async ()=>{
+    await axios.get("http://127.0.0.1:5000/auth/logout",{withCredentials:true})
+    .then((res)=>{
+      if (res.data.stat) {
+        props.setBtnVal(res.data.user)
+        window.location.href="/"
+      }
+    })
+  }
   return (
     <>
       <nav className="navbar navbar-expand-lg" id="navbar">
@@ -58,6 +69,14 @@ export default function Navbar() {
                   Get started
                 </a>
               </li>
+              {(<li className="nav-item" title={`${props.logBtn?' View yourposts':'Please login, to view your posts'}`}>
+                <a className={`nav-link ${props.logBtn?'active':'disabled'}`} href="/posts" aria-disabled="true" style={{color:`${props.logBtn?'white':'grey'}`}}>
+                  My Posts
+                </a>
+              </li>)}
+              {props.logBtn && (<li className="nav-item logout-btn">
+                <button className="log-btn" onClick={logOut}>Logout</button>
+              </li>)}
             </ul>
           </div>
         </div>

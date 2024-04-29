@@ -1,0 +1,26 @@
+.commentsPage{
+    height: 100vh;
+    width: 100vw;
+    background: #2e2d2c;
+}
+.yourComments{
+    height: 60vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: green;
+}
+.commentsTable{
+    margin: 20px;
+    border-radius: 20px;
+    /* border: none; */
+}
+
+.commentsTable th{
+    text-shadow: none;
+}
+
+.tableData{
+    display: flex;
+    justify-content: center;
+}

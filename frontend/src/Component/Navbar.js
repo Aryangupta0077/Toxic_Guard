@@ -64,11 +64,11 @@ export default function Navbar(props) {
                   About Us
                 </a>
               </li>
-              <li className="nav-item">
+              {!props.logBtn?<li className="nav-item">
                 <a className="nav-link active text" href="#getStarted">
                   Get started
                 </a>
-              </li>
+              </li>:""}
               {(<li className="nav-item" title={`${props.logBtn?' View yourposts':'Please login, to view your posts'}`}>
                 <a className={`nav-link ${props.logBtn?'active':'disabled'}`} href="/posts" aria-disabled="true" style={{color:`${props.logBtn?'white':'grey'}`}}>
                   My Posts

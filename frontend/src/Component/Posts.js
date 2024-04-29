@@ -39,6 +39,7 @@ export default function Posts(props) {
                     id={ele.id}
                     description={ele.description}
                     publishedAt={ele.publishedAt}
+                    setId={props.setId}
                   />
                 </div>
               );

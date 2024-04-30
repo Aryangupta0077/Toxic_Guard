@@ -1,6 +1,4 @@
 import "../assets/CSS/landing/landing.css";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import aryan from "../assets/images/aryan.jpeg";
 import ankush from "../assets/images/Ankush.jpg";
 import visharad from "../assets/images/visharad.jpeg";
@@ -48,7 +46,7 @@ export default function Landing(props) {
           </div>
           <div className="fbbtn">
            {
-            localStorage.getItem('btnStat')?<GoogleButton onClick={handleLogin}/>:<h3>You are logged in</h3>
+            <GoogleButton onClick={handleLogin}/>
            }
           </div>
         </motion.div>

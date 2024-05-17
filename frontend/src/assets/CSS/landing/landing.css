@@ -1,6 +1,6 @@
 *{
     color: white;
-    text-shadow: 4px 4px 4px  black;
+    text-shadow: 4px 4px 4px  #2e2d2c;
     margin: 0;padding: 0;
 }
 /* Description Styling */
@@ -90,7 +90,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: rgba(2, 3, 2);
+    background-color: #2e2d2c;
 }
 
 .quoteAndBtn h1{
@@ -131,7 +131,7 @@
 .aboutUs{
     min-height: 100vh;
     min-width: 100vw;
-    background-color: rgba(2, 3, 2);
+    background-color: #2e2d2c;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -150,7 +150,7 @@
 .card{
     margin: 10px;
     box-shadow: 2px 2px 5px rgb(21, 118, 21);
-    background-color: black;
+    background-color: #2e2d2c;
     width: 20vw;
     
 }

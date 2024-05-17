@@ -13,13 +13,12 @@ export default function PostsItem(props) {
           src={props.url}
           className="card-img-top"
           alt="thumbnail"
-          style={{ width: "24.99vw", height: "20vh" }}
         />
         <div className="card-body">
-          <p>id:{props.id}</p>
-          <p>title: {props.title}</p>
-          <p>Description: {props.description}</p>
-          <p>Posted on: {props.publishedAt.slice(0, 10)}</p>
+          <p className="dotted-description">id: {props.id}</p>
+          <p className="dotted-description">title: {props.title}</p>
+          <p className="dotted-description">Description: {props.description}</p>
+          <p className="dotted-description">Posted on: {props.publishedAt.slice(0, 10)}</p>
           <button className="bttn" onClick={getComments}>
             comments
           </button>

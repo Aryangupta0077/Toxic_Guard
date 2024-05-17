@@ -1,29 +1,38 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../assets/CSS/comments/comments.css";
+import ScorePopUp from "./ScorePopUp";
 import Spinner from "./Spinner";
 export default function Comments(props) {
   const [commentsVal, setCommentsVal] = useState({ data: null });
-  const [spinnerState,setSpinnerState]=useState(false)
-  let i = 0;
+  const [spinnerState, setSpinnerState] = useState(false);
+
   const fetchComments = async () => {
-    setSpinnerState(true)
+    if (!props.videoId) return;
+    setSpinnerState(true);
     const params = {
       videoId: props.videoId,
     };
-    await axios
-      .get("http://localhost:5000/profile/comments", {
-        withCredentials: true,
-        params: params,
-      })
-      .then((res) => {
-        setCommentsVal({ data: res.data });
-        setSpinnerState(false)
-      });
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/profile/comments",
+        {
+          withCredentials: true,
+          params: params,
+        }
+      );
+      setCommentsVal({ data: response.data });
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    } finally {
+      setSpinnerState(false);
+    }
   };
   useEffect(() => {
+
     fetchComments();
   }, []);
+
   return (
     <>
       <div className="commentsPage">
@@ -31,37 +40,56 @@ export default function Comments(props) {
           <h1>Comments on this video</h1>
         </div>
         <div className="tableData">
-
-        {spinnerState?<Spinner/>:<table className="table commentsTable table-striped-columns">
-          <thead>
-            <tr>
-              <th scope="col">S.No</th>
-              <th scope="col">Comment text</th>
-              <th scope="col">date Published</th>
-              <th scope="col">Comment id</th>
-              <th scope="col">Author</th>
-              <th scope="col">Author's Channel link</th>
-            </tr>
-          </thead>
-          {commentsVal.data &&
-            commentsVal.data.map((ele) => {
-              i = i + 1;
-              return (
-                <tbody>
+          {spinnerState ? (
+            <Spinner />
+          ) : (
+            <div>
+              <button className="bttn">Analyse Comments</button>
+              {commentsVal.data ? <ScorePopUp commentsVal={commentsVal} /> : ""}
+              <table className="table commentsTable table-dark table-hover vh-100">
+                <thead>
                   <tr>
-                    <th scope="row">{i}</th>
-                    <th>{ele.commentText}</th>
-                    <th>{ele.datePublished.slice(0,10)}</th>
-                    <th>{ele.commentId}</th>
-                    <th>{ele.author}</th>
-                    <th><a href={ele.authorChannelLink}>{ele.authorChannelLink}</a></th>
-                    <td></td>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Comment text</th>
+                    <th scope="col">date Published</th>
+                    <th scope="col">Comment id</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Author's Channel link</th>
                   </tr>
-                </tbody>
-              );
-            })}
-        </table>}
+                </thead>
+                <tbody>
+                {commentsVal.data &&
+                    Array.isArray(commentsVal.data) &&
+                    commentsVal.data.map((ele, index) => (
+                      <tr key={ele.commentId}>
+                        <th scope="row" className="dotted-description">
+                          {index + 1}
+                        </th>
+                        <td className="dotted-description">
+                          {ele.commentText}
+                        </td>
+                        <td className="dotted-description">
+                          {ele.datePublished.slice(0, 10)}
+                        </td>
+                        <td className="dotted-description">
+                          {ele.commentId}
+                        </td>
+                        <td className="dotted-description">{ele.author}</td>
+                        <td>
+                          <a
+                            href={ele.authorChannelLink}
+                            className="dotted-description"
+                          >
+                            {ele.authorChannelLink}
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+              </table>
             </div>
+          )}
+        </div>
       </div>
     </>
   );

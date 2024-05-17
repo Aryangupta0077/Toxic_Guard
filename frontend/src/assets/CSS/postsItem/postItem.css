@@ -1,8 +1,13 @@
-.post{
+/* .post{
     width: 25vw;
     height: 55vh;
-}
+} */
 
+.dotted-description {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 @media screen and(max-width:576px) {
     
 }

@@ -13,7 +13,6 @@
 .commentsTable{
     margin: 20px;
     border-radius: 20px;
-    /* border: none; */
 }
 
 .commentsTable th{
@@ -21,6 +20,7 @@
 }
 
 .tableData{
-    display: flex;
-    justify-content: center;
+    /* display: flex;
+    justify-content: center; */
+    overflow-y: scroll;
 }

@@ -124,7 +124,7 @@ app.get("/profile/videos", (req, res) => {
 
 app.get("/profile/comments", async (req, res) => {
   try {
-    let commentsData = []
+    let commentsData = [];
     const auth = new google.auth.OAuth2();
     auth.setCredentials({ access_token: req.user.accessToken });
     const youtube = google.youtube({ version: "v3", auth });
@@ -134,21 +134,88 @@ app.get("/profile/comments", async (req, res) => {
     });
     for (let i = 0; i < response.data.items.length; i++) {
       const comments = {
-        commentId:response.data.items[i].snippet.topLevelComment.id,
-        commentText:response.data.items[i].snippet.topLevelComment.snippet.textOriginal,
-        author:response.data.items[i].snippet.topLevelComment.snippet.authorDisplayName,
-        image:response.data.items[i].snippet.topLevelComment.snippet.authorProfileImageUrl,
-        datePublished:response.data.items[i].snippet.topLevelComment.snippet.publishedAt,
-        dateUpdated:response.data.items[i].snippet.topLevelComment.snippet.updatedAt,
-        authorChannelLink:response.data.items[i].snippet.topLevelComment.snippet.authorChannelUrl
+        commentId: response.data.items[i].snippet.topLevelComment.id,
+        commentText:
+          response.data.items[i].snippet.topLevelComment.snippet.textOriginal,
+        author:
+          response.data.items[i].snippet.topLevelComment.snippet
+            .authorDisplayName,
+        image:
+          response.data.items[i].snippet.topLevelComment.snippet
+            .authorProfileImageUrl,
+        datePublished:
+          response.data.items[i].snippet.topLevelComment.snippet.publishedAt,
+        dateUpdated:
+          response.data.items[i].snippet.topLevelComment.snippet.updatedAt,
+        authorChannelLink:
+          response.data.items[i].snippet.topLevelComment.snippet
+            .authorChannelUrl,
+      };
+      commentsData.push(comments);
     }
-     commentsData.push(comments) 
-    }
-    res.send(commentsData)
+    res.send(commentsData);
   } catch (error) {
     res.send(error.message);
   }
 });
+
+app.get("/profile/score", async (req, res) => {
+  try {
+    let scoreData = [];
+    const requestedComments = req.query.comments;
+    API_KEY = process.env.API_KEY;
+    DISCOVERY_URL =
+      "https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1";
+
+    const client = await google.discoverAPI(DISCOVERY_URL);
+
+    // Map each comment to a promise of analyzing it
+    const analysisPromises = requestedComments.map(comment => {
+      const analyzeRequest = {
+        comment: {
+          text: comment.comments,
+        },
+        requestedAttributes: {
+          TOXICITY: {},
+        },
+      };
+
+      return new Promise((resolve, reject) => {
+        client.comments.analyze(
+          {
+            key: API_KEY,
+            resource: analyzeRequest,
+          },
+          (err, response) => {
+            if (err) {
+              reject(err);
+            } else {
+              const commentScore = {
+                comment: comment.comments,
+                commentId: comment.commentId,
+                author: comment.author,
+                score: response.data.attributeScores.TOXICITY.spanScores[0]
+                  .score.value,
+              };
+              scoreData.push(commentScore);
+              resolve();
+            }
+          }
+        );
+      });
+    });
+
+    // Wait for all analysis promises to resolve
+    await Promise.all(analysisPromises);
+
+    // Once all comments are analyzed, send the scoreData as response
+    res.json(scoreData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
 });

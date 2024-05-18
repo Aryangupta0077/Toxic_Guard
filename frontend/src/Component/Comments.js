@@ -46,7 +46,7 @@ export default function Comments(props) {
             <div>
               <button className="bttn">Analyse Comments</button>
               {commentsVal.data ? <ScorePopUp commentsVal={commentsVal} /> : ""}
-              <table className="table commentsTable table-dark table-hover vh-100">
+              <table className="table commentsTable table-dark table-hover">
                 <thead>
                   <tr>
                     <th scope="col">S.No</th>

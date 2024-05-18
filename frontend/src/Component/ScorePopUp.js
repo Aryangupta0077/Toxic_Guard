@@ -55,7 +55,11 @@ export default function ScorePopUp(props) {
         <div className="modal-dialog modal-lg">
           <div className="modal-content" style={{ backgroundColor: "#2e2d2c" }}>
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">
+              <h1
+                className="modal-title fs-5"
+                id="exampleModalLabel"
+                style={{ color: "#009ffd" }}
+              >
                 Comments Report
               </h1>
               <button
@@ -67,55 +71,100 @@ export default function ScorePopUp(props) {
               ></button>
             </div>
             <div className="modal-body">
-              {spinnerState?<Spinner/>:<table className="table table-dark table-hover ">
-                <thead>
-                  <tr>
-                    <th>Comment</th>
-                    <th>T. Score</th>
-                    <th>Rating</th>
-                    <th>author</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {commentScore.data &&
-                    commentScore.data.map((ele) => {
-                      return (
-                        <tr key={ele.commentId}>
-                          <th scope="row" className="dotted-descrpition">
-                            {ele.comment}
-                          </th>
-                          <th
-                            scope="row"
-                            className="dotted-descrpition"
-                            style={{
-                              color:
-                                ele.score > 0.6
-                                  ? "red"
-                                  : ele.score > 0.4
-                                  ? "blue"
-                                  : ele.score < 0.4
-                                  ? "green"
-                                  : "inherit",
-                            }}
-                          >
-                            {`${ele.score * 100}%`}
-                          </th>
-                          <th scope="row" className="dotted-descrpition">
-                            <h6>
-                              <span className="badge text-bg-secondary">
-                                {ele.score > 0.6 ? "Highly offensive" : ele.score>0.4?"moderate":"inoffensive"}
-                              </span>
-                            </h6>
-                          </th>
-                          <th scope="row" className="dotted-descrpition">
-                            {ele.author}
-                          </th>
-                        </tr>
-                        
-                      );
-                    })}
-                </tbody>
-              </table>}
+              {spinnerState ? (
+                <Spinner />
+              ) : (
+                <table className="table table-dark table-hover ">
+                  <thead>
+                    <tr>
+                      <th style={{ color: "#17ffee" }}>Comment</th>
+                      <th style={{ color: "#17ffee" }}>T. Score</th>
+                      <th style={{ color: "#17ffee" }}>Rating</th>
+                      <th style={{ color: "#17ffee" }}>author</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {commentScore.data &&
+                      commentScore.data.map((ele) => {
+                        return (
+                          <tr key={ele.commentId}>
+                            <th
+                              scope="row"
+                              className="dotted-descrpition"
+                              style={{
+                                color:
+                                  ele.score > 0.6
+                                    ? "red"
+                                    : ele.score > 0.4
+                                    ? "yellow"
+                                    : ele.score < 0.4
+                                    ? "#0BDA51"
+                                    : "inherit",
+                              }}
+                            >
+                              {ele.comment}
+                            </th>
+                            <th
+                              scope="row"
+                              className="dotted-descrpition"
+                              style={{
+                                color:
+                                  ele.score > 0.6
+                                    ? "red"
+                                    : ele.score > 0.4
+                                    ? "yellow"
+                                    : ele.score < 0.4
+                                    ? "#0BDA51"
+                                    : "inherit",
+                              }}
+                            >
+                              {`${String(ele.score * 100).slice(0, 4)}%`}
+                            </th>
+                            <th scope="row" className="dotted-descrpition">
+                              <h6>
+                                <span
+                                  className="badge text-bg-secondary"
+                                  style={{
+                                    color:
+                                      ele.score > 0.6
+                                        ? "red"
+                                        : ele.score > 0.4
+                                        ? "yellow"
+                                        : ele.score < 0.4
+                                        ? "#0BDA51"
+                                        : "inherit",
+                                  }}
+                                >
+                                  {ele.score > 0.6
+                                    ? "Highly offensive"
+                                    : ele.score > 0.4
+                                    ? "moderate"
+                                    : "inoffensive"}
+                                </span>
+                              </h6>
+                            </th>
+                            <th
+                              scope="row"
+                              className="dotted-descrpition"
+                              style={{
+                                color:
+                                  ele.score > 0.6
+                                    ? "red"
+                                    : ele.score > 0.4
+                                    ? "yellow"
+                                    : ele.score < 0.4
+                                    ? "#0BDA51"
+                                    : "inherit",
+                              }}
+                            >
+                              {ele.author}
+                            </th>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              )}
             </div>
             <div className="modal-footer">
               <button type="button" className="bttn" data-bs-dismiss="modal">

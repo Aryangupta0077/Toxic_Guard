@@ -41,6 +41,7 @@ export default function ScorePopUp(props) {
         className="bttn"
         data-bs-toggle="modal"
         data-bs-target="#exampleModal"
+        title="Check toxicity score"
       >
         Toxicity
       </button>
@@ -73,7 +74,7 @@ export default function ScorePopUp(props) {
             <div className="modal-body">
               {spinnerState ? (
                 <Spinner />
-              ) : (
+              ) : commentScore.data&&commentScore.data.length===0?(<h3>Can't fetch score, please try again later</h3>):(
                 <table className="table table-dark table-hover ">
                   <thead>
                     <tr>

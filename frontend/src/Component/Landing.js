@@ -46,7 +46,7 @@ export default function Landing(props) {
           </div>
           <div className="fbbtn">
            {
-            <GoogleButton onClick={handleLogin}/>
+            <GoogleButton onClick={handleLogin} title="Checka and analyse comments on your youtube videos"/>
            }
           </div>
         </motion.div>

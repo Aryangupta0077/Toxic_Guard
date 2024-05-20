@@ -70,7 +70,7 @@ export default function Navbar(props) {
                 </a>
               </li>:""}
               {(<li className="nav-item" title={`${props.logBtn?' View yourposts':'Please login, to view your posts'}`}>
-                <a className={`nav-link ${props.logBtn?'active':'disabled'}`} href="/posts" aria-disabled="true" style={{color:`${props.logBtn?'white':'grey'}`}}>
+                <a className={`nav-link ${props.logBtn?'active':'disabled'} text`} href="/posts" aria-disabled="true" style={{color:`${props.logBtn?'white':'grey'}`}}>
                   My Posts
                 </a>
               </li>)}

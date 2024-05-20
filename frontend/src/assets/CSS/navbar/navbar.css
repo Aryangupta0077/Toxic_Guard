@@ -37,6 +37,7 @@ h1.navbar-brand:hover{
 .logout-btn{
     position: absolute;
     right: 10vw;
+    margin: 5px 10px;
 }
 .log-btn{
     border-radius: 20px;
@@ -45,9 +46,7 @@ h1.navbar-brand:hover{
     background:green;
 }
 .log-btn:hover{
-    background-color: rgb(21, 118, 21,);
-    color: black;
-
+    background-color: rgb(21, 118, 21,0.8);
 }
 
 @media  screen and (max-width:992px) {

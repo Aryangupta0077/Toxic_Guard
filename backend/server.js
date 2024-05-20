@@ -7,6 +7,16 @@ const passport = require("passport");
 const cookieSession = require("cookie-session");
 const axios = require("axios");
 const { google } = require("googleapis");
+const AWS = require("aws-sdk");
+const { createCanvas } = require("canvas");
+const Chart = require("chart.js/auto");
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET,
+  region: "ap-south-1",
+});
+const comprehend = new AWS.Comprehend();
 
 const app = express();
 app.use(
@@ -16,7 +26,7 @@ app.use(
   })
 );
 
-// initialise passport
+// Initialise passport
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -31,13 +41,54 @@ app.use(
 app.use("/auth", authRoutes);
 
 function checkLogin(req, res, next) {
-  // console.log(req.user)
   if (!req.user) {
     res.send({ logInStat: false });
   } else {
     next();
   }
 }
+
+const createBarChart = (data) => {
+  const width = 300; // Define width and height
+  const height = 300;
+
+  const canvas = createCanvas(width, height);
+  const ctx = canvas.getContext("2d");
+  const chartConfig = {
+    type: "bar",
+    data: {
+      labels: ["POSITIVE", "NEGATIVE", "NEUTRAL", "MIXED"],
+      datasets: [
+        {
+          label: "Number of comments",
+          data: [data.positive, data.negative, data.neutral, data.mixed],
+          backgroundColor: [
+            'green',  // Positive - green
+            'red',  // Negative - red
+            'yellow',  // Neutral - yellow
+            'blue'   // Mixed - blue
+        ],
+        borderColor: [
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(54, 162, 235, 1)'
+        ],
+          borderWidth: 2,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  };
+  new Chart(ctx, chartConfig);
+  return canvas.toBuffer();
+};
 
 app.get("/profile", checkLogin, (req, res) => {
   res.send({ logInStat: true, userData: req.user });
@@ -56,7 +107,6 @@ app.get("/profile/videos", (req, res) => {
         },
       })
       .then((response) => {
-        // Check if the response status is OK (200)
         if (response.status === 200) {
           const channelId = response.data.items[0].id;
           axios
@@ -102,22 +152,16 @@ app.get("/profile/videos", (req, res) => {
                 });
             });
         } else {
-          // If the response status is not OK, log the error
           console.error("Error accessing YouTube API:", response.statusText);
-          // Send an error response to the client
           res.status(response.status).send(response.statusText);
         }
       })
       .catch((error) => {
-        // Log any errors that occur during the request
         console.error("Error accessing YouTube API:", error);
-        // Send an error response to the client
         res.status(500).send("Internal Server Error");
       });
   } catch (error) {
-    // Catch any synchronous errors that occur
     console.error("Error:", error);
-    // Send an error response to the client
     res.status(500).send("Internal Server Error");
   }
 });
@@ -169,8 +213,7 @@ app.get("/profile/score", async (req, res) => {
 
     const client = await google.discoverAPI(DISCOVERY_URL);
 
-    // Map each comment to a promise of analyzing it
-    const analysisPromises = requestedComments.map(comment => {
+    const analysisPromises = requestedComments.map((comment) => {
       const analyzeRequest = {
         comment: {
           text: comment.comments,
@@ -194,8 +237,9 @@ app.get("/profile/score", async (req, res) => {
                 comment: comment.comments,
                 commentId: comment.commentId,
                 author: comment.author,
-                score: response.data.attributeScores.TOXICITY.spanScores[0]
-                  .score.value,
+                score:
+                  response.data.attributeScores.TOXICITY.spanScores[0].score
+                    .value,
               };
               scoreData.push(commentScore);
               resolve();
@@ -205,14 +249,65 @@ app.get("/profile/score", async (req, res) => {
       });
     });
 
-    // Wait for all analysis promises to resolve
     await Promise.all(analysisPromises);
-
-    // Once all comments are analyzed, send the scoreData as response
     res.json(scoreData);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/profile/analyseSentiments", async (req, res) => {
+  try {
+    let sentimentsData = [];
+    let neg = 0;
+    let pos = 0;
+    let neu = 0;
+    let mix = 0;
+    const requestedComments = req.query.comments;
+    const data = requestedComments.map((comments) => {
+      const params = {
+        LanguageCode: "en",
+        Text: comments.comments,
+      };
+      return new Promise((resolve, reject) => {
+        comprehend.detectSentiment(params, (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            const commentSentiments = {
+              comment: comments.comments,
+              sentiment: data.Sentiment,
+              sentimentScore: data.SentimentScore,
+              author: comments.author,
+              id: comments.commentId,
+            };
+            sentimentsData.push(commentSentiments);
+            if (data.Sentiment === "NEGATIVE") {
+              neg = neg + 1;
+            } else if (data.Sentiment === "POSITIVE") {
+              pos = pos + 1;
+            } else if (data.Sentiment === "NEUTRAL") {
+              neu = neu + 1;
+            } else if (data.Sentiment === "MIXED") {
+              mix = mix + 1;
+            }
+            resolve();
+          }
+        });
+      });
+    });
+    await Promise.all(data);
+    const chartBuffer = createBarChart({
+      positive: pos,
+      negative: neg,
+      neutral: neu,
+      mixed: mix,
+    });
+    console.log(sentimentsData)
+    res.json({ sentimentsData, chart: chartBuffer.toString("base64") });
+  } catch (error) {
+    console.log(error);
   }
 });
 

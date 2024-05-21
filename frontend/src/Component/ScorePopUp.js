@@ -31,7 +31,7 @@ export default function ScorePopUp(props) {
   };
   useEffect(() => {
     setSpinnerState(true);
-    fetchScore();
+    // fetchScore();
     setSpinnerState(false);
   }, []);
   return (

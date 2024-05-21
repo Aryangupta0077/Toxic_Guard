@@ -304,7 +304,6 @@ app.get("/profile/analyseSentiments", async (req, res) => {
       neutral: neu,
       mixed: mix,
     });
-    console.log(sentimentsData)
     res.json({ sentimentsData, chart: chartBuffer.toString("base64") });
   } catch (error) {
     console.log(error);

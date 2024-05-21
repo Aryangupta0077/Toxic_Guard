@@ -7,9 +7,8 @@
 .yourComments{
     height: 60vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    color: #0BDA51;
+    justify-content: center;
 }
 .commentsTable{
     margin: 20px;
@@ -24,4 +23,42 @@
     /* display: flex;
     justify-content: center; */
     overflow-y: scroll;
+}
+
+.videoBox{
+    border: 2px #0BDA51 solid;
+    display: flex;
+    text-align: center;
+}
+
+.commentsTitle{
+    text-align: center;
+}
+
+.data{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 2px #0BDA51 solid;
+}
+.thumbnail{
+    width: 20vw;
+    height: 30vh;
+}
+
+@media screen and (max-width:992px) {
+    .yourComments{
+        flex-direction: column;
+    }
+    .videoBox{
+        flex-direction: column;
+    }
+    .data{
+        border-left: none;
+        border-top: #0BDA51 solid 2px;
+    }
+    .thumbnail{
+        height: 20vh;
+        width: 25vw;
+    }
 }

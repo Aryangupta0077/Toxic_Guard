@@ -40,6 +40,7 @@ export default function Posts(props) {
                     description={ele.description}
                     publishedAt={ele.publishedAt}
                     setId={props.setId}
+                    setVideoOverview={props.setVideoOverview}
                   />
                 </div>
               );

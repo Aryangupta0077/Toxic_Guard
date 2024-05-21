@@ -22,5 +22,5 @@ export default function Protected(props) {
   useEffect(() => {
     checkUser();
   },[]);
-  return <>{status ? <props.Component userData={userData} setId={props.setId} /> : <Error />}</>;
+  return <>{status ? <props.Component userData={userData} setId={props.setId} setVideoOverview={props.setVideoOverview}/> : <Error />}</>;
 }

@@ -32,6 +32,7 @@ export default function Comments(props) {
     }
   };
   useEffect(() => {
+    console.log(props.videoOverview)
     fetchComments();
   }, []);
 
@@ -39,12 +40,26 @@ export default function Comments(props) {
     <>
       <div className="commentsPage">
         {commentsVal.data && commentsVal.data.length === 0 ? (
-          <h1 style={{ color: "#0BDA51" }}>Comments not found</h1>
+          <div className="yourComments">
+            <h1 style={{ color: "#0BDA51" }}>Comments not found</h1>
+          </div>
         ) : (
           <div>
-            <div className="yourComments">
-              <h1>Comments on this video</h1>
+            <div className="yourComments container">
+              {props.videoOverview.data?<div className="col-lg-6 col-sm-12 container videoBox">
+                <div className="col-lg-6">
+                  <img src={props.videoOverview.data.url} alt="Video thumbnail" className="thumbnail"/>
+                </div>
+                <div className="col-lg-6 data">
+                  <p>title: {props.videoOverview.data.title}</p>
+                  <p>Video ID: {props.videoOverview.data.id}</p>
+                  <p>Description: {props.videoOverview.data.description}</p>
+                </div>
+              </div>:""}
+            <div className=" col-lg-6 commentsTitle col-sm-12" >
+              <h1 style={{color: "#0BDA51"}}>Comments on this video</h1>
               <img src={chartSrc} alt=""  style={{backgroundColor:"white"}}/>
+            </div>
             </div>
             <div >
               {spinnerState ? (

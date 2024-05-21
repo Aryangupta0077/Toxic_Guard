@@ -28,11 +28,11 @@ export default function ScorePopUp(props) {
       .then((res) => {
         setData(res.data.sentimentsData);
         setChartSrc(`data:image/png;base64,${res.data.chart}`);
-          console.log(data)
+          // console.log(data)
       });
   };
   useEffect(() => {
-    fetchScore();
+    // fetchScore();
   }, []);
   return (
     <>

@@ -69,7 +69,7 @@ export default function Landing(props) {
                   Some quick example text to build on the card title and make up
                   the bulk of the card's content.
                 </p>
-                <a href="/" className="bttn">
+                <a href="https://www.linkedin.com/in/ankush-kumar-92b281281/" target="_blank" className="bttn">
                   contact
                 </a>
               </div>
@@ -84,7 +84,7 @@ export default function Landing(props) {
                   Some quick example text to build on the card title and make up
                   the bulk of the card's content.
                 </p>
-                <a href="/" className="bttn">
+                <a href="https://www.linkedin.com/in/visharad-sandal-a066b324b/" target="_blank" className="bttn">
                   contact
                 </a>
               </div>
@@ -99,7 +99,7 @@ export default function Landing(props) {
                   Some quick example text to build on the card title and make up
                   the bulk of the card's content.
                 </p>
-                <a href="/" className="bttn">
+                <a href="https://www.linkedin.com/in/aryangupta0511/" target="_blank" className="bttn">
                   contact
                 </a>
               </div>

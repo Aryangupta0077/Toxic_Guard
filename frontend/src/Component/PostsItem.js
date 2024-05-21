@@ -3,6 +3,13 @@ import { useNavigate } from "react-router-dom";
 export default function PostsItem(props) {
   const navigate = useNavigate()
   const getComments = async () => {
+    props.setVideoOverview({data:{
+      url:props.url,
+      title:props.title,
+      id:props.id,
+      description:props.description,
+      publishedAt:props.publishedAt
+    }})
     props.setId(props.id)
     navigate('/comments')
   };

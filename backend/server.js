@@ -166,6 +166,58 @@ app.get("/profile/videos", (req, res) => {
   }
 });
 
+app.get("/profile/actions/report", async (req, res) => {
+  try {
+    const commentId  = req.query.commentId;
+  
+
+    const auth = new google.auth.OAuth2();
+    auth.setCredentials({ access_token: req.user.accessToken });
+
+    const youtube = google.youtube({ version: "v3", auth });
+
+    // Report the comment as spam
+    const response = await youtube.comments.markAsSpam({
+      id: commentId,
+    });
+
+    if (response.status === 204) {
+      res.status(200).send({ message: "Comment reported successfully" });
+    } else {
+      res.status(response.status).send({ message: response.statusText });
+    }
+  } catch (error) {
+    console.error("Error reporting comment:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/profile/actions/delete", async (req, res) => {
+  try {
+    const commentId  = req.query.commentId;
+  
+
+    const auth = new google.auth.OAuth2();
+    auth.setCredentials({ access_token: req.user.accessToken });
+
+    const youtube = google.youtube({ version: "v3", auth });
+
+    // Report the comment as spam
+    const response = await youtube.comments.delete({
+      id: commentId,
+    });
+
+    if (response.status === 204) {
+      res.status(200).send({ message: "Comment deleted successfully" });
+    } else {
+      res.status(response.status).send({ message: response.statusText });
+    }
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.get("/profile/comments", async (req, res) => {
   try {
     let commentsData = [];

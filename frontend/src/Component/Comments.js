@@ -7,8 +7,6 @@ import AnalyseComments from "./AnalyseComments"
 export default function Comments(props) {
   const [commentsVal, setCommentsVal] = useState({ data: null });
   const [spinnerState, setSpinnerState] = useState(false);
-  const [data, setData] = useState(null);
-  const [chartSrc, setChartSrc] = useState("");
 
   const fetchComments = async () => {
     if (!props.videoId) return;
@@ -32,7 +30,6 @@ export default function Comments(props) {
     }
   };
   useEffect(() => {
-    console.log(props.videoOverview)
     fetchComments();
   }, []);
 
@@ -58,7 +55,6 @@ export default function Comments(props) {
               </div>:""}
             <div className=" col-lg-6 commentsTitle col-sm-12" >
               <h1 style={{color: "#0BDA51"}}>Comments on this video</h1>
-              <img src={chartSrc} alt=""  style={{backgroundColor:"white"}}/>
             </div>
             </div>
             <div >
@@ -68,13 +64,13 @@ export default function Comments(props) {
                 <div>
                   {commentsVal.data ? (
                     <>
-                    <ScorePopUp commentsVal={commentsVal} />
-                    <AnalyseComments commentsVal={commentsVal} />
+                    <ScorePopUp commentsVal={commentsVal}/>
+                    <AnalyseComments commentsVal={commentsVal}/>
                     </>
                   ) : (
                     ""
                   )}
-                  <div className="tableData">
+                  <div className="tableData table-responsive">
 
                   <table className="table commentsTable table-dark table-hover">
                     <thead>

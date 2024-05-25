@@ -19,12 +19,6 @@
     text-shadow: none;
 }
 
-.tableData{
-    /* display: flex;
-    justify-content: center; */
-    overflow-y: scroll;
-}
-
 .videoBox{
     border: 2px #0BDA51 solid;
     display: flex;
